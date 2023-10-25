@@ -121,11 +121,12 @@ const cart = {
  * const price = formatPrice(123000);
  * console.log(price); // Skrifar út `123.000 kr.`
  * @param {number} price Verð til að sníða.
- * @returns Verð sniðið með íslenskum krónu.
+ * @returns {string} Verð sniðið með íslenskum krónu.
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl
  */
 function formatPrice(price) {
-  /* Útfæra */
+  //return price toString();
+  return new Intl.NumberFormat('de-IS', { style: 'decimal'}).format(price) +' kr.';
 }
 
 /**
@@ -136,7 +137,7 @@ function formatPrice(price) {
  * @returns `true` ef `num` er heiltala á bilinu `[min, max]`, annars `false`.
  */
 function validateInteger(num, min = 0, max = Infinity) {
-  /* Útfæra */
+  return min <= num && num <= max;
 }
 
 /**
@@ -151,7 +152,11 @@ function validateInteger(num, min = 0, max = Infinity) {
  * @returns Streng sem inniheldur upplýsingar um vöru og hugsanlega fjölda af henni.
  */
 function formatProduct(product, quantity = undefined) {
-  /* Útfæra */
+  if (quantity && quantity > 1) {
+    const total = (quantity * product.price);
+    return `${product.title} - ${quantity}x${formatPrice (product.price)} samtals ${formatPrice(total)}`;
+  }
+  return `${product.title} - ${formatPrice(product.price)}`;
 }
 
 /**
@@ -238,6 +243,8 @@ function addProduct() {
     description,
     price,
   };
+
+  console.log(product)
 
   // Bætum vörunni aftast við fylkið okkar.
   products.push(product);
