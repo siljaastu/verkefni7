@@ -329,6 +329,7 @@ function addProductToCart() {
     const newLine = { product, quantity };
     cart.lines.push(newLine)
   }
+  console.info(`Vöru bætt við körfu:\n${formatProduct(product, quantity)}`);
 
   /* Hér ætti að nota `validateInteger` hjálparfall til að staðfesta gögn frá notanda */
   
@@ -349,9 +350,9 @@ function addProductToCart() {
  */
 function showCart() {
   if (!cart.lines.length) {
-    console.log('Karfan er tóm.')
+    console.info('Karfan er tóm.')
   } else {
-    console.log(cartInfo(cart));
+    console.info(cartInfo(cart));
   }
 }
 
@@ -375,7 +376,7 @@ function showCart() {
  */
 function checkout() {
   if (!cart.lines.length) {
-    console.log('Karfan er tóm.');
+    console.info('Karfan er tóm.');
     return;
   }
 
