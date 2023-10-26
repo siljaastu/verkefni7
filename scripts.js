@@ -125,7 +125,6 @@ const cart = {
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl
  */
 function formatPrice(price) {
-  //return price toString();
   return new Intl.NumberFormat('de-IS', { style: 'decimal'}).format(price) +' kr.';
 }
 
@@ -171,7 +170,10 @@ function formatProduct(product, quantity = undefined) {
  * @returns Streng sem inniheldur upplýsingar um körfu.
  */
 function cartInfo(cart) {
-  /* Útfæra */
+  const s = cart.lines.map((line) => (formatProduct(line.product, line.quantity))).join('\n');
+  const total = cart.lines.map((line) => line.product.price * line.quantity).reduce((a, b) => a + b, 0);
+
+  return [s, formatPrice(total)].join('\n');
 }
 
 // --------------------------------------------------------
@@ -197,6 +199,7 @@ function addProduct() {
   // Þetta er kallað „early exit“ og er gott til að koma í veg fyrir að þurfa að skrifa auka
   // skilyrði í if-setningum en getur valdið vandræðum í einhverjum tilfellum.
   // https://en.wikipedia.org/wiki/Structured_programming#Early_exit
+
   const title = prompt('Titill:');
   if (!title) {
     console.error('Titill má ekki vera tómur.');
@@ -265,9 +268,9 @@ function addProduct() {
  * @returns undefined
  */
 function showProducts() {
-  /* Útfæra */
-  /* Hér ætti að nota `formatPrice` hjálparfall */
+  products.forEach((product) => { console.log(`#${product.id} ${product.title} - ${product.description} - ${formatPrice(product.price)}`) })
 }
+  /* Hér ætti að nota `formatPrice` hjálparfall */
 
 /**
  * Bæta vöru við körfu.
@@ -285,7 +288,47 @@ function showProducts() {
  * @returns undefined
  */
 function addProductToCart() {
-  /* Útfæra */
+  const productIdAsString = prompt('Auðkenni vöru sem á að bæta við:');
+
+  if (!productIdAsString) {
+    return;
+  }
+
+  const productId = Number.parseInt(productIdAsString);
+
+  if (!productId) {
+    console.error('Auðkenni vöru er ekki löglegt, verður að vera heiltala stærri en 0.');
+    return;
+  }
+
+  const product = products.find((prod) => productId === prod.id);
+
+  if (!product) {
+    console.error('Vara fannst ekki.');
+    return;
+  }
+
+  const quantityAsString = prompt('Sláðu inn fjölda:');
+
+  if (!quantityAsString) {
+    return;
+  }
+
+  const quantity = Number.parseInt(quantityAsString);
+
+  if (!validateInteger(quantity, 1, 99)) {
+    console.error('Fjöldi er ekki löglegur, lágmark 1 og hámark 99.');
+    return;
+  }
+  
+  const productInCart = cart.lines.find((line) => line.product.id === productId);
+
+  if (productInCart) {
+    productInCart.quantity += quantity;
+  } else {
+    const newLine = { product, quantity };
+    cart.lines.push(newLine)
+  }
 
   /* Hér ætti að nota `validateInteger` hjálparfall til að staðfesta gögn frá notanda */
   
@@ -305,7 +348,11 @@ function addProductToCart() {
  * @returns undefined
  */
 function showCart() {
-  /* Útfæra */
+  if (!cart.lines.length) {
+    console.log('Karfan er tóm.')
+  } else {
+    console.log(cartInfo(cart));
+  }
 }
 
 /**
@@ -327,5 +374,25 @@ function showCart() {
  * @returns undefined
  */
 function checkout() {
-  /* Útfæra */
+  if (!cart.lines.length) {
+    console.log('Karfan er tóm.');
+    return;
+  }
+
+  const name = prompt('Nafn:');
+
+  if(!name) {
+    console.error("Nafn má ekki vera tómt!");
+    return;
+  }
+
+  const address = prompt("Heimilisfang:");
+
+  if(!address) {
+    console.error("Heimilisfang má ekki vera tómt!");
+    return;
+  }
+
+  const receipt = [`Pöntun móttekin ${name}.`, `Vörur verða sendar á ${address}`, '', cartInfo(cart)].join('\n');
+  console.log(receipt);
 }
