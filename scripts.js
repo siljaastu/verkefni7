@@ -268,7 +268,7 @@ function addProduct() {
  * @returns undefined
  */
 function showProducts() {
-  products.forEach((product) => { console.log(`#${product.id} ${product.title} - ${product.description} - ${formatPrice(product.price)}`) })
+  products.forEach((product) => { console.info(`#${product.id} ${product.title} - ${product.description} - ${formatPrice(product.price)}`) })
 }
   /* Hér ætti að nota `formatPrice` hjálparfall */
 
@@ -308,7 +308,7 @@ function addProductToCart() {
     return;
   }
 
-  const quantityAsString = prompt('Sláðu inn fjölda:');
+  const quantityAsString = prompt('Sláðu inn fjölda sem þú vilt bæta í körfu:');
 
   if (!quantityAsString) {
     return;
@@ -382,14 +382,14 @@ function checkout() {
   const name = prompt('Nafn:');
 
   if(!name) {
-    console.error("Nafn má ekki vera tómt!");
+    console.error('Nafn má ekki vera tómt.');
     return;
   }
 
-  const address = prompt("Heimilisfang:");
+  const address = prompt('Heimilisfang:');
 
   if(!address) {
-    console.error("Heimilisfang má ekki vera tómt!");
+    console.error('Heimilisfang má ekki vera tómt.');
     return;
   }
 
